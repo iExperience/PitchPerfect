@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 
-class PlayViewController: UIViewController {
+class PlayViewController: UIViewController, AVAudioPlayerDelegate {
     
     @IBOutlet weak var stopButton: UIButton!
     
@@ -20,24 +20,33 @@ class PlayViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(audioURL)
         do {
             try audioPlayer = AVAudioPlayer(contentsOf: audioURL)
 //            try audioFile = AVAudioFile(forReading: audioURL)
 //            audioEngine = AVAudioEngine()
+            audioPlayer.delegate = self
+            audioPlayer.numberOfLoops = 3
         } catch let error as NSError {
             print("AudioPlayer error: \(error.localizedDescription)")
         }
     }
     
     override func viewDidAppear(_ animated:Bool) {
-        stopAudio()
+        enableStoppedVisuals()
+    }
+    
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        print("Stopped")
+        if flag {
+            enableStoppedVisuals()
+        }
     }
     
     // MARK: Actions
     
     @IBAction func playFast(_ sender: UIButton) {
-        playWithSpeed(3.0)
+//        playWithSpeed(3.0)
+        playAudio()
     }
     
     @IBAction func playSlow(_ sender: UIButton) {
@@ -49,26 +58,28 @@ class PlayViewController: UIViewController {
     }
     
     @IBAction func stopAudio(_ sender: UIButton) {
-        stopAudio()
+        audioPlayer.stop()
+        enableStoppedVisuals()
     }
     
     // MARK: Helpers
     func playWithSpeed(_ speed: Float) {
-        stopAudio()
+        audioPlayer.stop()
         audioPlayer.enableRate = true
         audioPlayer.rate = speed
         playAudio()
     }
     
     func playAudio() {
+        audioPlayer.volume = 1.0
         audioPlayer.currentTime = 0.0
-        stopButton.isEnabled = true
+        audioPlayer.prepareToPlay()
         audioPlayer.play()
+        print("Playing...")
+        stopButton.isEnabled = true
     }
     
-    func stopAudio() {
+    func enableStoppedVisuals() {
         stopButton.isEnabled = false
-        print(audioPlayer)
-        audioPlayer.stop()
     }
 }

@@ -32,7 +32,7 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
             recordingSession.requestRecordPermission() { [unowned self] allowed in
                 DispatchQueue.main.async {
                     if allowed {
-                        print("Initialized!")
+                        // print("Initialized!")
                     } else {
                         // Would send alert to user here.
                         print("Couldn't get recording permissions")
@@ -83,7 +83,7 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
             recorder.delegate = self
             recorder.prepareToRecord()
             recorder.record()
-            print("Recording")
+            print("Recording...")
         } catch {
             print("Error recording")
         }
